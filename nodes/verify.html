@@ -3,14 +3,15 @@
         category: 'nexmo',
         color: '#7683d8',
         defaults: {
-          creds: {value:"", type:"nexmocreds"},
+          creds: {value:"", type:"nexmobasic"},
           to: {},
           brand: {},
         },
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Send Verify"
+        label: "Send Verify",
+        paletteLabel : "Send Verify"
     });
 </script>
 <script type="text/x-red" data-template-name="sendverify">
@@ -39,7 +40,7 @@
 
  <h3>Outputs</h3>
  <dl class="message-properties">
-     <dt>ncco<span class="property-type">object</span></dt>
+     <dt>Resonse from the Nexmo API<span class="property-type">object</span></dt>
      <dd> <code>msg.payload</code> will contain the response from the Nexmo API</dd>
  </dl>
 
@@ -60,14 +61,15 @@ The Verify API returns a request_id. Use this to identify a specific verificatio
         category: 'nexmo',
         color: '#7683d8',
         defaults: {
-          creds: {value:"", type:"nexmocreds"},
+          creds: {value:"", type:"nexmobasic"},
           verify_id: {},
           code: {},
         },
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Check Code"
+        label: "Check Code",
+        paletteLabel : "Check Code"
     });
 </script>
 <script type="text/x-red" data-template-name="checkverify">
@@ -96,7 +98,7 @@ The Verify API returns a request_id. Use this to identify a specific verificatio
 
  <h3>Outputs</h3>
  <dl class="message-properties">
-     <dt>ncco<span class="property-type">object</span></dt>
+     <dt>Resonse from the Nexmo API<span class="property-type">object</span></dt>
      <dd> <code>msg.payload</code> will contain the response from the Nexmo API</dd>
  </dl>
 
@@ -121,7 +123,8 @@ Check the verification code that a user has provided. Use the request_id that wa
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Cancel Verify"
+        label: "Cancel Verify",
+        paletteLabel : "Cancel Verify"
     });
 </script>
 <script type="text/x-red" data-template-name="cancelverify">
@@ -144,7 +147,7 @@ Check the verification code that a user has provided. Use the request_id that wa
 
  <h3>Outputs</h3>
  <dl class="message-properties">
-     <dt>ncco<span class="property-type">object</span></dt>
+     <dt>Resonse from the Nexmo API<span class="property-type">object</span></dt>
      <dd> <code>msg.payload</code> will contain the response from the Nexmo API</dd>
  </dl>
 
@@ -163,13 +166,14 @@ If the user decides to cancel the verification process, you should send a contro
         category: 'nexmo',
         color: '#7683d8',
         defaults: {
-          creds: {value:"", type:"nexmocreds"},
+          creds: {value:"", type:"nexmobasic"},
           verify_id: {}
         },
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Check Code"
+        label: "Next Verify",
+        paletteLabel : "Next Verify"
     });
 </script>
 <script type="text/x-red" data-template-name="nextverify">
@@ -194,7 +198,7 @@ Trigger next verification stage</p>
 
  <h3>Outputs</h3>
  <dl class="message-properties">
-     <dt>ncco<span class="property-type">object</span></dt>
+     <dt>Resonse from the Nexmo API<span class="property-type">object</span></dt>
      <dd> <code>msg.payload</code> will contain the response from the Nexmo API</dd>
  </dl>
 
@@ -206,6 +210,57 @@ You can advance to the next verification attempt programmatically by making a co
 <h3>References</h3>
     <ul>
         <li><a href="https://developer.nexmo.com/api/verify#verify-control">Nexmo Documentation</a></li>
+    </ul>
+</script> 
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('searchverify',{
+        category: 'nexmo',
+        color: '#7683d8',
+        defaults: {
+          creds: {value:"", type:"nexmobasic"},
+          verify_id: {}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "nexmo.png",
+        label: "Search Verify",
+        paletteLabel : "Search Verify"
+    });
+</script>
+<script type="text/x-red" data-template-name="searchverify">
+  <div class="form-row">
+      <label for="node-config-input-privatekey"></i>Nexmo Credentials</label>
+      <input type="text" id="node-input-creds" >
+  </div>
+  
+  <div class="form-row">
+      <label for="node-input-verify_id"><i class="icon-tag"></i>Request ID {}</label>
+      <input type="text" id="node-input-verify_id" placeholder="Verify request ID">
+  </div>
+
+  
+</script>
+
+<script type="text/x-red" data-help-name="searchverify">
+<p>
+Trigger next verification stage</p>
+
+<h3>Inputs</h3>
+
+ <h3>Outputs</h3>
+ <dl class="message-properties">
+     <dt>Resonse from the Nexmo API<span class="property-type">object</span></dt>
+     <dd> The <code>msg</code> Object will contain the response from the Nexmo API</dd>
+ </dl>
+
+<h3>Details</h3>
+You can use the search functionality to see the current status or eventual outcome of a Verify request, using the <code>request_id</code> returned when the verify code was sent.
+
+<h3>References</h3>
+    <ul>
+        <li><a href="https://developer.nexmo.com/api/verify#verifySearch">Nexmo Documentation</a></li>
     </ul>
 </script> 
 

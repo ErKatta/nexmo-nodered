@@ -13,6 +13,7 @@ module.exports = function (RED) {
     node.on('input', function (msg) {
       var data = dataobject(this.context(), msg);
       this.text = mustache.render(config.text, data);
+      this.voicename = mustache.render(config.voicename, data);
       if ( 'ncco' in msg){
         var resp = msg.ncco;    
       } else{
@@ -136,7 +137,6 @@ module.exports = function (RED) {
     this.startonenter = config.startonenter;
     var node = this;
     node.on('input', function (msg) {
-      console.log(config);
       var data = dataobject(this.context(), msg);
       this.name = mustache.render(config.name, data);
       this.musiconholdurl = mustache.render(config.musiconholdurl, data);
@@ -158,7 +158,7 @@ module.exports = function (RED) {
       ncco.record=this.record;
       ncco.endOnExit=this.endonexit;
       ncco.startOnEnter=this.startonenter;
-      ncco.musicOnHoldUrl=this.musiconholdurl;
+      ncco.musicOnHoldUrl=[this.musiconholdurl];
       if (this.canhear != ""){
         ncco.canHear = this.canhear.split(",")
       }

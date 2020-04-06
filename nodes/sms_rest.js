@@ -33,15 +33,14 @@ module.exports = function (RED) {
         if(err) { console.error(err); }
         else {
           msg.payload=response;
-          node.send(response)  
+          node.send(msg)  
         }
       })
     });  
   }
   
- 
+
   RED.nodes.registerType("sendsms",sendsms);    
-    
 }
 
 function dataobject(context, msg){

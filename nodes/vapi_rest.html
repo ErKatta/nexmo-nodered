@@ -26,6 +26,7 @@
         outputs:1,
         icon: "nexmo.png",
         label: "Create Call",
+        paletteLabel: "Create Call",
         oneditprepare: function() {
           $("#node-input-answertype").val(this.answertype);
           $("#node-input-answer").typedInput({
@@ -209,7 +210,8 @@ Create a new outbound call
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Get Recording"
+        label: "Get Recording",
+        paletteLabel: "Get Recording"
     });
 </script>
 <script type="text/x-red" data-template-name="getrecording">
@@ -242,11 +244,7 @@ Create a new outbound call
 
 <h3>Details</h3>
 Fetch the recording audio from a URL supplied in a recording event webhook
-
-<h3>References</h3>
-    <ul>
-        <li><a href="https://developer.nexmo.com/voice/voice-api/ncco-reference#connect">Nexmo NCCO Reference</a></li>
-    </ul>
+Note, this node does not write the audio to disk, the filename field is there to allow the setting of msg.filename so that when connected to a file node the audio will be saved
 </script>
 
 
@@ -259,12 +257,13 @@ Fetch the recording audio from a URL supplied in a recording event webhook
         defaults: {
           creds: {value:"", type:"nexmovoiceapp"},
           calluuid: {},
-          status:{}
+          state:{}
         },
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Earmuff"
+        label: "Earmuff",
+        paletteLabel: "Earmuff"
     });
 </script>
 <script type="text/x-red" data-template-name="earmuff">
@@ -279,8 +278,8 @@ Fetch the recording audio from a URL supplied in a recording event webhook
   </div>
   
   <div class="form-row">
-      <label for="node-input-status"><i class="fa fa-tasks"></i>Status</label>
-      <select type="text" id="node-input-eventmethod" style="width:70%;">
+      <label for="node-input-state"><i class="fa fa-tasks"></i>Status</label>
+      <select type="text" id="node-input-state" style="width:70%;">
       <option value="on">Earmuff On</option>
       <option value="off">Earmuff Off (unearmuff)</option>
        </select>
@@ -316,12 +315,13 @@ Earmuff a call leg
         defaults: {
           creds: {value:"", type:"nexmovoiceapp"},
           calluuid: {},
-          status:{}
+          state:{}
         },
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Mute"
+        label: "Mute",
+        paletteLabel : "Mute"
     });
 </script>
 <script type="text/x-red" data-template-name="mute">
@@ -336,8 +336,8 @@ Earmuff a call leg
   </div>
   
   <div class="form-row">
-      <label for="node-input-status"><i class="fa fa-tasks"></i>Status</label>
-      <select type="text" id="node-input-eventmethod" style="width:70%;">
+      <label for="node-input-state"><i class="fa fa-tasks"></i>Status</label>
+      <select type="text" id="node-input-state" style="width:70%;">
       <option value="on">Mute On</option>
       <option value="off">Mute Off (unmute)</option>
        </select>
@@ -378,7 +378,8 @@ Mute a call leg
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Hangup"
+        label: "Hangup",
+        paletteLabel : "Hangup"
     });
 </script>
 <script type="text/x-red" data-template-name="hangup">
@@ -422,14 +423,25 @@ Hangup a call leg.
         defaults: {
           creds: {value:"", type:"nexmovoiceapp"},
           calluuid: {},
-	  url: {}
+          ncco: {},
+          nccotype: {}
         },
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Transfer"
+        label: "Transfer",
+        paletteLabel: "Transfer",
+        oneditprepare: function() {
+            $("#node-input-nccotype").val(this.nccotype);
+            $("#node-input-ncco").typedInput({
+                default: 'url',
+                typeField: $("#node-input-nccotype"),
+                types: ['json',{value:"url",label:"URL"},{value:"fixed",label:"msg.ncco",hasValue:false}]
+            });
+        }
     });
 </script>
+
 <script type="text/x-red" data-template-name="transfer">
   <div class="form-row">
       <label for="node-config-input-privatekey"></i>Nexmo Credentials</label>
@@ -442,8 +454,9 @@ Hangup a call leg.
   </div>
   
   <div class="form-row">
-      <label for="node-input-url"><i class="icon-tag"></i>New NCCO URL {}</label>
-      <input type="text" id="node-input-url" placeholder="url">
+      <label for="node-input-ncco"><i class="icon-tag"></i>New NCCO {}</label>
+      <input type="text" id="node-input-ncco">
+      <input type="hidden" id="node-input-nccotype">
   </div>
 
   
@@ -485,7 +498,8 @@ Will transfer a call leg to a new NCCO, you need to supply the URL which will se
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Play Audio"
+        label: "Play Audio",
+        paletteLabel: "Play Audio"
     });
 </script>
 <script type="text/x-red" data-template-name="playaudio">
@@ -561,7 +575,8 @@ Play an audio file into a call
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Play TTS"
+        label: "Play TTS",
+        paletteLabel: "Play TTS"
     });
 </script>
     
@@ -590,7 +605,7 @@ Play an audio file into a call
   </div>
   
   <div class="form-row">
-      <label for="node-input-voicename"><i class="icon-tag"></i>Voice Name</label>
+      <label for="node-input-voicename"><i class="icon-tag"></i>Voice Name {}</label>
       <input type="text" id="node-input-voicename" placeholder="Kimblerly">
   </div>
   
@@ -640,7 +655,8 @@ Play text to speech into a call
         inputs:1,
         outputs:1,
         icon: "nexmo.png",
-        label: "Play DTMF"
+        label: "Play DTMF",
+        paletteLabel: "Play DTMF"
     });
 </script>
 <script type="text/x-red" data-template-name="playdtmf">

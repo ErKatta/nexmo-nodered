@@ -138,15 +138,15 @@ module.exports = function (RED) {
       nexmo.calls.update(this.calluuid, { action: 'earmuff' }, (err, res) => {
         if(err) { console.error(err); }
         else {
-          msg.payload=response;
-          node.send(response)  
+          msg.payload=res;
+          node.send(msg)  
         }
       });
     } else {
       nexmo.calls.update(this.calluuid, { action: 'unearmuff' }, (err, res) => {
         if(err) { console.error(err); }
         else {
-          msg.payload=response;
+          msg.payload=res;
           node.send(msg)  
         }
       });
@@ -174,15 +174,15 @@ module.exports = function (RED) {
       nexmo.calls.update(this.calluuid, { action: 'mute' }, (err, res) => {
         if(err) { console.error(err); }
         else {
-          msg.payload=response;
-          node.send(response)  
+          msg.payload=res;
+          node.send(msg)  
         }
       });
     } else {
       nexmo.calls.update(this.calluuid, { action: 'unmute' }, (err, res) => {
         if(err) { console.error(err); }
         else {
-          msg.payload=response;
+          msg.payload=res;
           node.send(msg)  
         }
       });
@@ -208,7 +208,7 @@ module.exports = function (RED) {
       nexmo.calls.update(this.calluuid, { action: 'hangup' }, (err, response) => {
         if(err) { console.error(err); }
         else {
-          msg.payload=response;
+          msg.payload=res;
           node.send(msg)  
         }
       });
@@ -216,15 +216,23 @@ module.exports = function (RED) {
     
     });  
   }
+
   function transfer(config){
     RED.nodes.createNode(this, config);
     this.creds = RED.nodes.getNode(config.creds);
+    this.nccotype = config.nccotype;
     var node = this;
     node.on('input', function (msg) {
       var debug = (this.context().global.get('nexmoDebug') | false);
       var data = dataobject(this.context(), msg);
       this.calluuid = mustache.render(config.calluuid, data);
-      this.url = mustache.render(config.url, data);
+      if ( this.nccotype == 'url'){
+        this.url = mustache.render(config.ncco, data);  
+      } else if (this.nccotype == 'json'){
+        this.ncco = JSON.parse(mustache.render(config.ncco, data));
+      } else if (this.nccotype == 'fixed'){
+        this.ncco = msg.ncco
+      }
       const nexmo = new Nexmo({
         apiKey: this.creds.credentials.apikey,
         apiSecret: this.creds.credentials.apisecret,
@@ -232,7 +240,13 @@ module.exports = function (RED) {
         privateKey: this.creds.credentials.privatekey
         }, {debug: debug, appendToUserAgent: "nexmo-nodered/"+version}
       );
-      nexmo.calls.update(this.calluuid, {action: 'transfer', destination: {"type": "ncco", "url": [this.url]}}, (err, response) => {
+      this.destination = {type:"ncco"};
+      if ( this.nccotype == 'url'){
+        this.destination.url = [this.url]
+      } else {
+        this.destination.ncco = this.ncco
+      }
+      nexmo.calls.update(this.calluuid, {action: 'transfer', destination: this.destination}, (err, response) => {
         if(err) { console.error(err); }
         else {
           msg.payload=response;
@@ -248,7 +262,6 @@ module.exports = function (RED) {
   
   function playaudio(config){
     RED.nodes.createNode(this, config);
-    console.log(debug);
     this.creds = RED.nodes.getNode(config.creds);
     this.action = config.action
     this.loop = config.loop
@@ -300,6 +313,7 @@ module.exports = function (RED) {
      var data = dataobject(this.context(), msg);
      this.calluuid = mustache.render(config.calluuid, data);
      this.text = mustache.render(config.text, data);
+     this.voicename = mustache.render(config.voicename, data);
      const nexmo = new Nexmo({
        apiKey: this.creds.credentials.apikey,
        apiSecret: this.creds.credentials.apisecret,
@@ -319,7 +333,7 @@ module.exports = function (RED) {
        nexmo.calls.talk.stop(this.calluuid,  (err, res) => {
          if(err) { console.error(err); }
          else {
-           msg.payload=response;
+           msg.payload=res;
            node.send(msg)  
          }
        });
@@ -353,7 +367,6 @@ function playdtmf(config){
     });
   });  
 }
-
 
 
   function clean(obj) {
